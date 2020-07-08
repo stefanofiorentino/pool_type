@@ -96,7 +96,7 @@ struct FakeHandle : public Emitter<FakeHandle, FakeEvent1, FakeEvent2> {
 
 int main() {
     Emitter<FakeHandle, FakeEvent1, FakeEvent2> e2;
-    auto connection = e2.once<FakeEvent2>([](FakeEvent2 &, FakeHandle &) {
+    auto connection = e2.once<FakeEvent2>([](const auto &, auto &) {
         std::puts(__PRETTY_FUNCTION__ );
     });
     e2.publish(FakeEvent2{});
