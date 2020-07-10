@@ -3,4 +3,11 @@ project(pool_type)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(pool_type main.cpp)
+include(cmake/BuildDefaults.cmake)
+
+if(BUILD_TESTING)
+    fetch_content_googletest()
+
+    enable_testing()
+    add_subdirectory("test")
+endif()
