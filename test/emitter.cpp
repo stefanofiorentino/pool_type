@@ -36,9 +36,7 @@ TEST_F(FakeHandleFixture, once_empty) {
 
 TEST_F(FakeHandleFixture, once_clear) {
     ASSERT_TRUE(fakeHandle->empty());
-    fakeHandle->once<FakeEvent1>([](const auto &, auto &) {
-        std::puts(__PRETTY_FUNCTION__);
-    });
+    fakeHandle->once<FakeEvent1>([](const auto &, auto &) { FAIL(); });
     ASSERT_FALSE(fakeHandle->empty());
     fakeHandle->clear();
     ASSERT_TRUE(fakeHandle->empty());
@@ -66,9 +64,7 @@ TEST_F(FakeHandleFixture, on_empty) {
 
 TEST_F(FakeHandleFixture, on_clear) {
     ASSERT_TRUE(fakeHandle->empty());
-    fakeHandle->on<FakeEvent1>([](const auto &, auto &) {
-        std::puts(__PRETTY_FUNCTION__);
-    });
+    fakeHandle->on<FakeEvent1>([](const auto &, auto &) { FAIL(); });
     ASSERT_FALSE(fakeHandle->empty());
     fakeHandle->clear();
     ASSERT_TRUE(fakeHandle->empty());
