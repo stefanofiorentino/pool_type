@@ -51,7 +51,6 @@ TEST_F(FakeHandleFixture, on_publish) {
     ASSERT_TRUE(called);
 }
 
-
 TEST_F(FakeHandleFixture, on_empty) {
     ASSERT_TRUE(fakeHandle->empty());
     fakeHandle->on<FakeEvent1>([](const auto &, auto &) {
@@ -88,5 +87,4 @@ TEST_F(FakeHandleFixture, on_and_once) {
     ASSERT_FALSE(fakeHandle->empty());
     fakeHandle->clear();
     ASSERT_TRUE(fakeHandle->empty());
-
 }
