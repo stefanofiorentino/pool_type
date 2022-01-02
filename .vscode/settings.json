@@ -1,3 +1,37 @@
 {
-    "cmake.configureArgs": ["-DBUILD_TESTING:BOOL=TRUE"]
+    "cmake.configureArgs": [
+        "-DBUILD_TESTING:BOOL=TRUE"
+    ],
+    "files.associations": {
+        "mutex": "cpp",
+        "string": "cpp",
+        "variant": "cpp",
+        "xlocnum": "cpp",
+        "tuple": "cpp",
+        "algorithm": "cpp",
+        "type_traits": "cpp",
+        "any": "cpp",
+        "array": "cpp",
+        "charconv": "cpp",
+        "chrono": "cpp",
+        "format": "cpp",
+        "forward_list": "cpp",
+        "functional": "cpp",
+        "list": "cpp",
+        "memory": "cpp",
+        "optional": "cpp",
+        "system_error": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "xhash": "cpp",
+        "xlocale": "cpp",
+        "xlocbuf": "cpp",
+        "xlocinfo": "cpp",
+        "xlocmon": "cpp",
+        "xmemory": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp"
+    }
 }
