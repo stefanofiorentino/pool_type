@@ -66,12 +66,12 @@ struct Emitter {
 
     template<typename E>
     Connection<E> once(Listener<E> f) {
-        return std::get<Handler<E> >(pools).once(std::move(f));
+        return std::get<Handler<E>>(pools).once(std::move(f));
     }
 
     template<typename E>
     Connection<E> on(Listener<E> f) {
-        return std::get<Handler<E> >(pools).on(std::move(f));
+        return std::get<Handler<E>>(pools).on(std::move(f));
     }
 
     template<typename E>
