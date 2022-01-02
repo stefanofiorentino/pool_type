@@ -24,15 +24,15 @@ struct Emitter {
 
         Handler() = default;
 
-        Connection once(Listener f) {
+        Connection once(Listener f) noexcept {
             return onceL.emplace(onceL.cend(), false, std::move(f));
         }
 
-        Connection on(Listener f) {
+        Connection on(Listener f) noexcept {
             return onL.emplace(onL.cend(), false, std::move(f));
         }
 
-        void publish(E event, T &ref) {
+        void publish(E event, T &ref) noexcept {
             ListenerList currentL;
             onceL.swap(currentL);
 
