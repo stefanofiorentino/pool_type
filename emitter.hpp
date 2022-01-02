@@ -18,43 +18,28 @@ struct Emitter {
     template<typename E>
     struct Handler {
         using Listener = std::function<void(E &, T &)>;
-        using Element = std::pair<bool, Listener>;
-        using ListenerList = std::list<Element>;
+        using ListenerList = std::list<Listener>;
         using Connection = typename ListenerList::iterator;
 
-        Handler() = default;
-
-        Connection once(Listener f) noexcept {
-            return onceL.emplace(onceL.cend(), false, std::move(f));
-        }
-
         Connection on(Listener f) noexcept {
-            return onL.emplace(onL.cend(), false, std::move(f));
+            return onL.emplace(onL.cend(), std::move(f));
         }
 
         void publish(E event, T &ref) noexcept {
-            ListenerList currentL;
-            onceL.swap(currentL);
-
-            auto func = [&event, &ref](auto &&element) {
-                return element.first ? void() : element.second(event, ref);
-            };
-
-            std::for_each(currentL.rbegin(), currentL.rend(), func);
-            std::for_each(onL.cbegin(), onL.cend(), func);
+            std::for_each(onL.cbegin(), onL.cend(), [&event, &ref](auto &&element) {
+                return element(event, ref);
+            });
         }
 
         [[nodiscard]] bool empty() const noexcept {
-            return onceL.empty() && onL.empty();
+            return onL.empty();
         }
 
         void clear() noexcept {
-            onceL.clear();
             onL.clear();
         }
 
     private:
-        ListenerList onceL{};
         ListenerList onL{};
     };
 
@@ -63,11 +48,6 @@ struct Emitter {
 
     template<typename E> 
     using Listener = typename Handler<E>::Listener;
-
-    template<typename E>
-    Connection<E> once(Listener<E> f) {
-        return std::get<Handler<E>>(pools).once(std::move(f));
-    }
 
     template<typename E>
     Connection<E> on(Listener<E> f) {
