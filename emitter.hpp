@@ -82,7 +82,7 @@ struct Emitter {
 
     [[nodiscard]] bool empty() const noexcept {
         auto empty{true};
-        std::apply([&empty](auto &&... args) {
+        std::apply([&empty](auto const&... args) {
             ((empty &= args.empty()), ...);
         }, pools);
         return empty;
