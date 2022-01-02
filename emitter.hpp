@@ -61,7 +61,8 @@ struct Emitter {
     template <typename E>
     using Connection = typename Handler<E>::Connection;
 
-    template<typename E> using Listener = typename Handler<E>::Listener;
+    template<typename E> 
+    using Listener = typename Handler<E>::Listener;
 
     template<typename E>
     Connection<E> once(Listener<E> f) {
