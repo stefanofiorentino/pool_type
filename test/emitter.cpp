@@ -17,7 +17,7 @@ struct FakeHandleFixture : public ::testing::Test {
 
 TEST_F(FakeHandleFixture, on_publish) {
     auto called{false};
-    fakeHandle->on<FakeEvent1>([&called](const auto &, auto &) {
+    fakeHandle->on<FakeEvent1>([&called](auto const& event, auto &handler) {
         called = true;
     });
     fakeHandle->publish(FakeEvent1{});
@@ -26,8 +26,7 @@ TEST_F(FakeHandleFixture, on_publish) {
 
 TEST_F(FakeHandleFixture, on_empty) {
     ASSERT_TRUE(fakeHandle->empty());
-    fakeHandle->on<FakeEvent1>([](const auto &, auto &) {
-        std::puts(__PRETTY_FUNCTION__);
+    fakeHandle->on<FakeEvent1>([](auto const& event, auto &handler) {
     });
     ASSERT_FALSE(fakeHandle->empty());
     fakeHandle->publish(FakeEvent1{});
@@ -36,7 +35,7 @@ TEST_F(FakeHandleFixture, on_empty) {
 
 TEST_F(FakeHandleFixture, on_clear) {
     ASSERT_TRUE(fakeHandle->empty());
-    fakeHandle->on<FakeEvent1>([](const auto &, auto &) { FAIL(); });
+    fakeHandle->on<FakeEvent1>([](auto const& event, auto &handler) { FAIL(); });
     ASSERT_FALSE(fakeHandle->empty());
     fakeHandle->clear();
     ASSERT_TRUE(fakeHandle->empty());

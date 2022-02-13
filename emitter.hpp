@@ -6,18 +6,11 @@
 #include <list>
 #include <functional>
 
-#include "defines.h"
-
-template<typename ...T>
-inline void pretty_print(T &&...) {
-    std::puts(__PRETTY_FUNCTION__);
-}
-
 template<typename T, typename ...Events>
 struct Emitter {
     template<typename E>
     struct Handler {
-        using Listener = std::function<void(E &, T &)>;
+        using Listener = std::function<void(E const&, T &)>;
         using ListenerList = std::list<Listener>;
         using Connection = typename ListenerList::iterator;
 
@@ -56,7 +49,6 @@ struct Emitter {
 
     template<typename E>
     void publish(E event) {
-        pretty_print(event);
         std::get<Handler<E>>(pools).publish(std::move(event), *static_cast<T *>(this));
     }
 
