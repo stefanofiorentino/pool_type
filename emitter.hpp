@@ -3,7 +3,7 @@
 
 #include <tuple>
 
-template<typename T, typename Event1, typename Event2>
+template<typename T, typename Event1, typename Event2, typename Event3>
 struct Emitter {
     template <typename E>
     struct Handler {
@@ -58,7 +58,7 @@ struct Emitter {
         std::get<Handler<E>>(handler).clear();
     }
 
-    std::tuple<Handler<Event1>, Handler<Event2>> handler;
+    std::tuple<Handler<Event1>, Handler<Event2>, Handler<Event3>> handler;
 };
 
 
