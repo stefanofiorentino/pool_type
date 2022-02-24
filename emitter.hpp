@@ -10,16 +10,16 @@ template<typename T, typename ...Events>
 struct Emitter {
     template<typename E>
     struct Handler {
-        using Listener = std::function<void(E const&, T &)>;
+        using Listener = std::function<void(E&&, T &)>;
         using ListenerList = std::list<Listener>;
         using Connection = typename ListenerList::iterator;
 
-        Connection on(Listener f) noexcept {
-            return onL.emplace(onL.cend(), std::move(f));
+        Connection on(Listener&& f) noexcept {
+            return onL.emplace(onL.cend(), std::forward<Listener>(f));
         }
 
-        void publish(E event, T &ref) noexcept {
-            std::for_each(onL.cbegin(), onL.cend(), [&event, &ref](auto &&element) {
+        void publish(E&& event, T &ref) noexcept {
+            std::for_each(onL.cbegin(), onL.cend(), [event = std::forward<E>(event), &ref](auto &&element) {
                 return element(event, ref);
             });
         }
@@ -43,13 +43,13 @@ struct Emitter {
     using Listener = typename Handler<E>::Listener;
 
     template<typename E>
-    Connection<E> on(Listener<E> f) {
-        return std::get<Handler<E>>(pools).on(std::move(f));
+    Connection<E> on(Listener<E>&& f) {
+        return std::get<Handler<E>>(pools).on(std::forward<Listener<E>>(f));
     }
 
     template<typename E>
-    void publish(E event) {
-        std::get<Handler<E>>(pools).publish(std::move(event), *static_cast<T *>(this));
+    void publish(E&& event) {
+        std::get<Handler<E>>(pools).publish(std::forward<E>(event), *static_cast<T *>(this));
     }
 
     [[nodiscard]] bool empty() const noexcept {
