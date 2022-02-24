@@ -17,3 +17,4 @@ function(ADD_THIS_TEST TEST_NAME TEST_SOURCE)
 endfunction()
 
 ADD_THIS_TEST(emitter emitter.cpp)
+ADD_THIS_TEST(finite_state_machine finite_state_machine.cpp)
