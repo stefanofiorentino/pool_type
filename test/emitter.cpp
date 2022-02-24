@@ -27,7 +27,6 @@ TEST_F(FakeHandleFixture, on_publish) {
 TEST_F(FakeHandleFixture, on_empty) {
     ASSERT_TRUE(fakeHandle->empty());
     fakeHandle->on([](const auto &, auto &) {
-        std::puts(__PRETTY_FUNCTION__);
     });
     ASSERT_FALSE(fakeHandle->empty());
     fakeHandle->publish(FakeEvent1{});

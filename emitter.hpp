@@ -1,18 +1,6 @@
 #ifndef POOL_TYPE_EMITTER_HPP
 #define POOL_TYPE_EMITTER_HPP
 
-#include <iostream>
-#include <tuple>
-#include <list>
-#include <functional>
-
-#include "defines.h"
-
-template<typename ...T>
-inline void pretty_print(T &&...) {
-    std::puts(__PRETTY_FUNCTION__);
-}
-
 template<typename T, typename E>
 struct Emitter {
     struct Handler {
