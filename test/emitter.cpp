@@ -1,39 +1,39 @@
 #include <gmock/gmock.h>
 #include <emitter.hpp>
 
-struct FakeEvent1 {
+struct FakeEvent {
 };
 
-struct FakeHandle : public Emitter<FakeHandle, FakeEvent1> {
+struct FakeEmitter : public Emitter<FakeEmitter, FakeEvent> {
 };
 
-struct FakeHandleFixture : public ::testing::Test {
-    FakeHandleFixture() :
-            fakeHandle{std::make_shared<FakeHandle>()} {
+struct FakeEmitterFixture : public ::testing::Test {
+    FakeEmitterFixture() :
+            fakeHandle{std::make_shared<FakeEmitter>()} {
     }
 
-    std::shared_ptr<FakeHandle> fakeHandle;
+    std::shared_ptr<FakeEmitter> fakeHandle;
 };
 
-TEST_F(FakeHandleFixture, on_publish) {
+TEST_F(FakeEmitterFixture, on_publish) {
     auto called{false};
     fakeHandle->on([&called](const auto &, auto &) {
         called = true;
     });
-    fakeHandle->publish(FakeEvent1{});
+    fakeHandle->publish(FakeEvent{});
     ASSERT_TRUE(called);
 }
 
-TEST_F(FakeHandleFixture, on_empty) {
+TEST_F(FakeEmitterFixture, on_empty) {
     ASSERT_TRUE(fakeHandle->empty());
     fakeHandle->on([](const auto &, auto &) {
     });
     ASSERT_FALSE(fakeHandle->empty());
-    fakeHandle->publish(FakeEvent1{});
+    fakeHandle->publish(FakeEvent{});
     ASSERT_FALSE(fakeHandle->empty());
 }
 
-TEST_F(FakeHandleFixture, on_clear) {
+TEST_F(FakeEmitterFixture, on_clear) {
     ASSERT_TRUE(fakeHandle->empty());
     fakeHandle->on([](const auto &, auto &) { FAIL(); });
     ASSERT_FALSE(fakeHandle->empty());
