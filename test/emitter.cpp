@@ -7,26 +7,20 @@ struct FakeEvent {
 struct FakeEmitter : public Emitter<FakeEmitter, FakeEvent> {
 };
 
-struct FakeEmitterFixture : public ::testing::Test {
-    FakeEmitterFixture() :
-            fakeEmitter{std::make_shared<FakeEmitter>()} {
-    }
-
-    std::shared_ptr<FakeEmitter> fakeEmitter;
-};
-
-TEST_F(FakeEmitterFixture, e2e) {
+TEST(FakeEmitter, e2e) {
+    FakeEmitter fakeEmitter;
     auto called{false};
-    ASSERT_TRUE(fakeEmitter->empty());
+    
+    ASSERT_TRUE(fakeEmitter.empty());
 
-    fakeEmitter->on([&called](const auto &, auto &) {
+    fakeEmitter.on([&called](const auto &, auto &) {
         called = true;
     });
-    ASSERT_FALSE(fakeEmitter->empty());
+    ASSERT_FALSE(fakeEmitter.empty());
     
-    fakeEmitter->publish(FakeEvent{});
+    fakeEmitter.publish(FakeEvent{});
     ASSERT_TRUE(called);
     
-    fakeEmitter->clear();
-    ASSERT_TRUE(fakeEmitter->empty());
+    fakeEmitter.clear();
+    ASSERT_TRUE(fakeEmitter.empty());
 }
