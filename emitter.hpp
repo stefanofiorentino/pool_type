@@ -6,21 +6,23 @@
 #include <list>
 #include <functional>
 
+#include "document.hpp"
+
 template<typename T, typename ...Events>
 struct Emitter {
     template<typename E>
     struct Handler {
         using Listener = std::function<void(E const&, T &)>;
-        using ListenerList = std::list<Listener>;
+        using ListenerList = std::vector<Listener>;
         using Connection = typename ListenerList::iterator;
 
-        Connection on(Listener f) noexcept {
-            return onL.emplace(onL.cend(), std::move(f));
+        void on(Listener f) noexcept {
+             onL.emplace_back(std::move(f));
         }
 
         void publish(E event, T &ref) noexcept {
             std::for_each(onL.cbegin(), onL.cend(), [&event, &ref](auto &&element) {
-                return element(event, ref);
+                return ::publish(element, event, ref);
             });
         }
 
@@ -33,7 +35,7 @@ struct Emitter {
         }
 
     private:
-        ListenerList onL{};
+        collection_t onL{};
     };
 
     template <typename E>
@@ -43,8 +45,8 @@ struct Emitter {
     using Listener = typename Handler<E>::Listener;
 
     template<typename E>
-    Connection<E> on(Listener<E> f) {
-        return std::get<Handler<E>>(pools).on(std::move(f));
+    void on(Listener<E> f) {
+        std::get<Handler<E>>(pools).on(std::move(f));
     }
 
     template<typename E>
