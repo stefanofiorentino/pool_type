@@ -30,3 +30,33 @@ TEST(emitter, transition) {
     h.publish(state_1{});
     ASSERT_TRUE(called);
 }
+
+bool finished()
+{
+    static uint8_t counter = 0;
+    return counter++ > 10;
+}
+
+struct start{};
+struct working{};
+struct finish{};
+
+struct ProcessHandle : Emitter<ProcessHandle, start, working, finish> {};
+
+TEST(emitter, process_manager) {
+    auto called{false};
+    ProcessHandle ph;
+    ph.on<start>([](auto &e, auto&h){
+        h.publish(working{});
+    });
+    ph.on<working>([](auto &e, auto&h){
+        while (!finished())
+            h.publish(working{});
+        h.publish(finish{});
+    });
+    ph.on<finish>([&called](auto &e, auto&h){
+        called = true;
+    });
+    ph.publish(start{});
+    ASSERT_TRUE(called);
+}
