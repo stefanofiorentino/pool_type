@@ -13,9 +13,8 @@ inline void pretty_print(T &&...) {
     std::puts(__PRETTY_FUNCTION__);
 }
 
-template<typename T, typename ...Events>
+template<typename T, typename E>
 struct Emitter {
-    template<typename E>
     struct Handler {
         using Listener = std::function<void(E &, T &)>;
         using ListenerList = std::list<Listener>;
@@ -43,38 +42,26 @@ struct Emitter {
         ListenerList onL{};
     };
 
-    template <typename E>
-    using Connection = typename Handler<E>::Connection;
+    using Connection = typename Handler::Connection;
+    using Listener = typename Handler::Listener;
 
-    template<typename E> 
-    using Listener = typename Handler<E>::Listener;
-
-    template<typename E>
-    Connection<E> on(Listener<E> f) {
-        return std::get<Handler<E>>(pools).on(std::move(f));
+    Connection on(Listener f) {
+        return handler.on(std::move(f));
     }
 
-    template<typename E>
     void publish(E event) {
-        pretty_print(event);
-        std::get<Handler<E>>(pools).publish(std::move(event), *static_cast<T *>(this));
+        handler.publish(std::move(event), *static_cast<T *>(this));
     }
 
     [[nodiscard]] bool empty() const noexcept {
-        auto empty{true};
-        std::apply([&empty](auto const&... args) {
-            ((empty &= args.empty()), ...);
-        }, pools);
-        return empty;
+        return handler.empty();
     }
 
     void clear() noexcept {
-        std::apply([](auto &&... args) {
-            ((args.clear()), ...);
-        }, pools);
+        handler.clear();
     }
 
-    std::tuple<Handler<Events>...> pools;
+    Handler handler;
 };
 
 
