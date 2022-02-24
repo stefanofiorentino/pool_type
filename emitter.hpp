@@ -1,8 +1,11 @@
 #ifndef POOL_TYPE_EMITTER_HPP
 #define POOL_TYPE_EMITTER_HPP
 
-template<typename T, typename E>
+#include <tuple>
+
+template<typename T, typename Event1, typename Event2>
 struct Emitter {
+    template <typename E>
     struct Handler {
         using Listener = std::function<void(E &, T &)>;
         using ListenerList = std::list<Listener>;
@@ -30,26 +33,32 @@ struct Emitter {
         ListenerList onL{};
     };
 
-    using Connection = typename Handler::Connection;
-    using Listener = typename Handler::Listener;
+    template <typename E>
+    using Connection = typename Handler<E>::Connection;
+    template <typename E>
+    using Listener = typename Handler<E>::Listener;
 
-    Connection on(Listener f) {
-        return handler.on(std::move(f));
+    template <typename E>
+    Connection<E> on(Listener<E> f) {
+        return std::get<Handler<E>>(handler).on(std::move(f));
     }
 
+    template <typename E>
     void publish(E event) {
-        handler.publish(std::move(event), *static_cast<T *>(this));
+        std::get<Handler<E>>(handler).publish(std::move(event), *static_cast<T *>(this));
     }
 
+    template <typename E>
     [[nodiscard]] bool empty() const noexcept {
-        return handler.empty();
+        return std::get<Handler<E>>(handler).empty();
     }
 
+    template <typename E>
     void clear() noexcept {
-        handler.clear();
+        std::get<Handler<E>>(handler).clear();
     }
 
-    Handler handler;
+    std::tuple<Handler<Event1>, Handler<Event2>> handler;
 };
 
 
