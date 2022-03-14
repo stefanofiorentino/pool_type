@@ -7,12 +7,12 @@ template<typename T, typename ...Events>
 struct Emitter {
     template <typename E>
     struct Handler {
-        using Listener = std::function<void(E &, T &)>;
+        using Listener = std::function<void(E const&, T &)>;
         using ListenerList = std::list<Listener>;
         using Connection = typename ListenerList::iterator;
 
-        Connection on(Listener f) noexcept {
-            return onL.emplace(onL.cend(), std::move(f));
+        Connection on(Listener&& f) noexcept {
+            return onL.emplace(onL.cend(), std::forward<Listener>(f));
         }
 
         void publish(E event, T &ref) noexcept {
@@ -39,13 +39,13 @@ struct Emitter {
     using Listener = typename Handler<E>::Listener;
 
     template <typename E>
-    Connection<E> on(Listener<E> f) {
-        return std::get<Handler<E>>(handler).on(std::move(f));
+    Connection<E> on(Listener<E>&& f) {
+        return std::get<Handler<E>>(handler).on(std::forward<Listener<E>>(f));
     }
 
     template <typename E>
-    void publish(E event) {
-        std::get<Handler<E>>(handler).publish(std::move(event), *static_cast<T *>(this));
+    void publish(E&& event) {
+        std::get<Handler<E>>(handler).publish(std::forward<E>(event), *static_cast<T *>(this));
     }
 
     template <typename E>
